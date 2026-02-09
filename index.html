@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <title>ESAN - Trayectoria histórica</title>
-
 <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
 <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
 </head>
@@ -12,137 +11,151 @@
 
 <a-scene>
 
-  <!-- ASSETS -->
   <a-assets>
     <img id="imgLobby" src="patio.jpg">
     <img id="imgAuditorio" src="butacas.jpg">
     <video id="videoUni" src="video3.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
   </a-assets>
 
-  <!-- ENTORNOS -->
   <a-sky id="skyPrincipal" src="#imgLobby" radius="40" rotation="0 -90 0"></a-sky>
   <a-sky id="skyButacas" src="#imgAuditorio" radius="40" rotation="0 -90 0" visible="false"></a-sky>
 
-  <!-- CAPA PARA OSCURECER SOLO LAS BUTACAS -->
   <a-entity id="oscurecerButacas"
             geometry="primitive: sphere; radius: 39"
             material="shader: flat; color: black; side: back; transparent: true; opacity: 0"
-            visible="false">
+            visible="false"
+            animation__oscurecer="property: material.opacity; to: 0.85; dur: 5000; startEvents: luzOff"
+            animation__aclarar="property: material.opacity; to: 0; dur: 1000; startEvents: luzOn">
   </a-entity>
 
-  <!-- VIDEO (SIEMPRE CLARO) -->
-  <a-video id="pantallaVideo"
-           src="#videoUni"
-           width="30"
-           height="10"
-           position="-27.5 2.5 -11.7"
-           look-at="[camera]"
-           visible="false"
-           material="shader: flat"
-           animation__entrar="property: scale; from: 0 0 0; to: 1 1 1; dur: 3000; easing: easeOutQuad; startEvents: videoEntra">
-  </a-video>
+  <a-entity id="grupoCine" position="-27.5 2.5 -11.7" look-at="[camera]" visible="false">
+    
+    <a-video id="pantallaVideo"
+             src="#videoUni"
+             width="30"
+             height="15"
+             material="shader: flat"
+             animation__entrar="property: scale; from: 0 0 0; to: 1 1 1; dur: 3000; easing: easeOutQuad; startEvents: videoEntra">
+    </a-video>
 
-  <!-- BOTÓN -->
+    <a-entity id="interfaz" position="0 -9 0.1">
+      <a-plane id="barraFondo" width="20" height="0.4" color="#666"></a-plane>
+      <a-plane id="barraProgreso" width="0.1" height="0.4" color="#E3173E" position="-10 0 0.01"></a-plane>
+      <a-text id="textoDuracion" value="0:00 / 0:28" align="center" position="0 1.5 0" width="18" font="mozillavr"></a-text>
+
+      <a-entity id="controles" position="0 -2.15 0">
+        <a-circle id="btnSalir" class="clickable" radius="0.9" color="#696a6d" position="-7 0 0">
+          <a-text value="Volver al\ninicio" align="center" baseline="center" width="2" font="mozillavr" wrap-count="15" position="0 0 0.05"></a-text>
+        </a-circle>
+        
+        <a-circle id="btnRetro" class="clickable" radius="0.9" color="#696a6d" position="-3.5 0 0">
+          <a-text value="-10s" align="center" baseline="center" width="2" font="mozillavr" wrap-count="10" position="0 0 0.05"></a-text>
+        </a-circle>
+        
+        <a-circle id="btnPausa" class="clickable" radius="0.9" color="#E3173E" position="0 0 0">
+          <a-text id="txtPausa" value="PAUSA" align="center" baseline="center" width="2" font="mozillavr" wrap-count="10" position="0 0 0.05"></a-text>
+        </a-circle>
+        
+        <a-circle id="btnAvanzar" class="clickable" radius="0.9" color="#696a6d" position="3.5 0 0">
+          <a-text value="+10s" align="center" baseline="center" width="2" font="mozillavr" wrap-count="10" position="0 0 0.05"></a-text>
+        </a-circle>
+        
+        <a-circle id="btnReset" class="clickable" radius="0.9" color="#FFFFFF" position="6.5 0 0">
+          <a-text value="Reiniciar" color="#000" align="center" baseline="center" width="2" font="mozillavr" wrap-count="10" position="0 0 0.05"></a-text>
+        </a-circle>
+      </a-entity>
+    </a-entity>
+  </a-entity>
+
   <a-entity id="contenedorBoton"
             position="0 1.6 -15"
             animation="property: position; to: 0 1.6 -2.5; dur: 8000; easing: easeOutCubic; delay: 500">
-
-    <a-circle id="btnAccion"
-              class="clickable"
-              color="#000"
-              opacity="0.7"
-              radius="0.7"
+    <a-circle id="btnAccion" class="clickable" color="#000" opacity="0.8" radius="0.8"
               animation__hover="property: scale; to: 1.2 1.2 1; dur: 200; startEvents: mouseenter"
               animation__leave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
-
-      <a-text id="textoBoton"
-              value="CONOCE NUESTRA\nHISTORIA"
-              align="center"
-              color="#FFFFFF"
-              width="1"
-              wrap-count="20"
-              anchor="center"
-              baseline="center">
-      </a-text>
-
+      <a-text id="textoBoton" value="CONOCE NUESTRA\nHISTORIA" align="center" baseline="center" width="1.5" wrap-count="15" font="mozillavr" position="0 0 0.05"></a-text>
     </a-circle>
   </a-entity>
 
-  <!-- CÁMARA -->
   <a-entity id="rig">
-
     <a-entity camera look-controls position="0 1.6 0">
-      <a-entity cursor="fuse: false; rayOrigin: mouse"
-                raycaster="objects: .clickable"></a-entity>
+      <a-entity cursor="fuse: false; rayOrigin: mouse" raycaster="objects: .clickable"></a-entity>
     </a-entity>
-
-    <a-entity laser-controls="hand: right"
-              raycaster="objects: .clickable; far: 50"></a-entity>
-
-    <a-entity laser-controls="hand: left"
-              raycaster="objects: .clickable; far: 50"></a-entity>
-
+    <a-entity laser-controls="hand: right" raycaster="objects: .clickable; far: 50" line="color: #FFD700"></a-entity>
+    <a-entity laser-controls="hand: left" raycaster="objects: .clickable; far: 50" line="color: #FFD700"></a-entity>
   </a-entity>
 
 </a-scene>
 
 <script>
-
 const video = document.querySelector('#videoUni');
 const pantalla = document.querySelector('#pantallaVideo');
+const grupoCine = document.querySelector('#grupoCine');
 const contenedorBtn = document.querySelector('#contenedorBoton');
 const btnAccion = document.querySelector('#btnAccion');
 const textoBoton = document.querySelector('#textoBoton');
 const skyPrincipal = document.querySelector('#skyPrincipal');
 const skyButacas = document.querySelector('#skyButacas');
 const oscurecerButacas = document.querySelector('#oscurecerButacas');
+const barraProgreso = document.querySelector('#barraProgreso');
+const textoDuracion = document.querySelector('#textoDuracion');
+const txtPausa = document.querySelector('#txtPausa');
 
-const animacionEntrada =
-  "property: position; to: 0 1.6 -2.5; dur: 8000; easing: easeOutCubic; delay: 500";
+const ANCHO_BARRA = 20;
+const animacionEntrada = "property: position; to: 0 1.6 -2.5; dur: 8000; easing: easeOutCubic; delay: 500";
 
-// CLICK BOTÓN
+function actualizarBarra() {
+  if (video.paused || video.ended) return;
+  const progreso = video.currentTime / (video.duration || 28);
+  barraProgreso.setAttribute('width', progreso * ANCHO_BARRA);
+  barraProgreso.setAttribute('position', `${-ANCHO_BARRA/2 + (progreso * ANCHO_BARRA)/2} 0 0.01`);
+  
+  const m = Math.floor(video.currentTime / 60);
+  const s = Math.floor(video.currentTime % 60).toString().padStart(2, '0');
+  textoDuracion.setAttribute('value', `${m}:${s} / 0:28`);
+  requestAnimationFrame(actualizarBarra);
+}
+
 btnAccion.addEventListener('click', () => {
-
   contenedorBtn.setAttribute('visible', 'false');
-
   skyPrincipal.setAttribute('visible', 'false');
   skyButacas.setAttribute('visible', 'true');
-
-  // APAGAR LUCES DEL AUDITORIO
   oscurecerButacas.setAttribute('visible', 'true');
-  oscurecerButacas.setAttribute('material', 'opacity: 0.85');
+  oscurecerButacas.emit('luzOff'); 
 
   video.currentTime = 0;
-  pantalla.setAttribute('visible', 'true');
+  grupoCine.setAttribute('visible', 'true');
 
   setTimeout(() => {
     pantalla.emit('videoEntra');
     video.play();
+    actualizarBarra();
   }, 500);
 });
 
-// FIN DEL VIDEO
-video.addEventListener('ended', () => {
+document.querySelector('#btnPausa').addEventListener('click', () => {
+  if (video.paused) { video.play(); txtPausa.setAttribute('value', 'PAUSA'); actualizarBarra(); }
+  else { video.pause(); txtPausa.setAttribute('value', 'PLAY'); }
+});
 
-  pantalla.setAttribute('visible', 'false');
+document.querySelector('#btnRetro').addEventListener('click', () => { video.currentTime -= 10; });
+document.querySelector('#btnAvanzar').addEventListener('click', () => { video.currentTime += 10; });
+document.querySelector('#btnReset').addEventListener('click', () => { video.currentTime = 0; video.play(); });
+document.querySelector('#btnSalir').addEventListener('click', () => { video.pause(); video.dispatchEvent(new Event('ended')); });
+
+video.addEventListener('ended', () => {
+  grupoCine.setAttribute('visible', 'false');
   skyButacas.setAttribute('visible', 'false');
   skyPrincipal.setAttribute('visible', 'true');
-
-  // PRENDER LUCES
-  oscurecerButacas.setAttribute('material', 'opacity: 0');
+  oscurecerButacas.emit('luzOn');
   oscurecerButacas.setAttribute('visible', 'false');
 
   textoBoton.setAttribute('value', 'VUELVE A VER\nNUESTRA\nHISTORIA');
-
   contenedorBtn.setAttribute('visible', 'true');
   contenedorBtn.setAttribute('position', '0 1.6 -15');
   contenedorBtn.removeAttribute('animation');
-
-  setTimeout(() => {
-    contenedorBtn.setAttribute('animation', animacionEntrada);
-  }, 50);
+  setTimeout(() => { contenedorBtn.setAttribute('animation', animacionEntrada); }, 50);
 });
-
 </script>
 
 </body>
