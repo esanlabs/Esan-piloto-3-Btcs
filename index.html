@@ -44,24 +44,24 @@
       <a-text id="textoDuracion" value="0:00 / 0:28" align="center" position="0 1.5 0" width="18" font="mozillavr"></a-text>
 
       <a-entity id="controles" position="0 -2.15 0">
-        <a-circle id="btnSalir" class="clickable" radius="0.9" color="#696a6d" position="-7 0 0">
-          <a-text value="Volver al\ninicio" align="center" baseline="center" width="2" font="mozillavr" wrap-count="15" position="0 0 0.05"></a-text>
+        <a-circle id="btnSalir" class="clickable" radius="0.95" color="#696a6d" position="-7 0 0">
+          <a-text value="Volver al\ninicio" align="center" baseline="center" width="2" font="mozillavr" wrap-count="15" position="0 0.12 0.05"></a-text>
         </a-circle>
         
-        <a-circle id="btnRetro" class="clickable" radius="0.9" color="#696a6d" position="-3.5 0 0">
-          <a-text value="-10s" align="center" baseline="center" width="2" font="mozillavr" wrap-count="10" position="0 0 0.05"></a-text>
+        <a-circle id="btnRetro" class="clickable" radius="0.95" color="#696a6d" position="-3.5 0 0">
+          <a-text value="-10s" align="center" baseline="center" width="2" font="mozillavr" wrap-count="10" position="0 0.12 0.05"></a-text>
         </a-circle>
         
-        <a-circle id="btnPausa" class="clickable" radius="0.9" color="#E3173E" position="0 0 0">
-          <a-text id="txtPausa" value="PAUSA" align="center" baseline="center" width="2" font="mozillavr" wrap-count="10" position="0 0 0.05"></a-text>
+        <a-circle id="btnPausa" class="clickable" radius="0.95" color="#E3173E" position="0 0 0">
+          <a-text id="txtPausa" value="PAUSA" align="center" baseline="center" width="2" font="mozillavr" wrap-count="10" position="0 0.12 0.05"></a-text>
         </a-circle>
         
-        <a-circle id="btnAvanzar" class="clickable" radius="0.9" color="#696a6d" position="3.5 0 0">
-          <a-text value="+10s" align="center" baseline="center" width="2" font="mozillavr" wrap-count="10" position="0 0 0.05"></a-text>
+        <a-circle id="btnAvanzar" class="clickable" radius="0.95" color="#696a6d" position="3.5 0 0">
+          <a-text value="+10s" align="center" baseline="center" width="2" font="mozillavr" wrap-count="10" position="0 0.12 0.05"></a-text>
         </a-circle>
         
-        <a-circle id="btnReset" class="clickable" radius="0.9" color="#FFFFFF" position="6.5 0 0">
-          <a-text value="Reiniciar" color="#000" align="center" baseline="center" width="2" font="mozillavr" wrap-count="10" position="0 0 0.05"></a-text>
+        <a-circle id="btnReset" class="clickable" radius="0.95" color="#FFFFFF" position="6.5 0 0">
+          <a-text value="Reiniciar" color="#000" align="center" baseline="center" width="2" font="mozillavr" wrap-count="10" position="0 0.12 0.05"></a-text>
         </a-circle>
       </a-entity>
     </a-entity>
@@ -73,7 +73,7 @@
     <a-circle id="btnAccion" class="clickable" color="#000" opacity="0.8" radius="0.8"
               animation__hover="property: scale; to: 1.2 1.2 1; dur: 200; startEvents: mouseenter"
               animation__leave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
-      <a-text id="textoBoton" value="CONOCE NUESTRA\nHISTORIA" align="center" baseline="center" width="1.5" wrap-count="15" font="mozillavr" position="0 0 0.05"></a-text>
+      <a-text id="textoBoton" value="CONOCE NUESTRA\nHISTORIA" align="center" baseline="center" width="1" wrap-count="15" font="mozillavr" position="0 0 0.05"></a-text>
     </a-circle>
   </a-entity>
 
@@ -160,6 +160,7 @@ video.addEventListener('ended', () => {
 
 </body>
 </html>
+
 
 
 
