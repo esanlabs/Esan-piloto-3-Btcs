@@ -40,28 +40,28 @@
 
     <a-entity id="interfaz" position="0 -9 0.1">
       <a-plane id="barraFondo" width="20" height="0.4" color="#666"></a-plane>
-      <a-plane id="barraProgreso" width="25" height="0.4" color="#E3173E" position="-10 0 0.01"></a-plane>
+      <a-plane id="barraProgreso" width="0.1" height="0.4" color="#E3173E" position="-10 0 0.01"></a-plane>
       <a-text id="textoDuracion" value="0:00 / 0:28" align="center" position="0 1.5 0" width="18" font="mozillavr"></a-text>
 
       <a-entity id="controles" position="0 -2.15 0">
         <a-circle id="btnSalir" class="clickable" radius="0.95" color="#696a6d" position="-7 0 0">
-          <a-text value="Volver al\ninicio" align="center" baseline="center" width="2" font="mozillavr" wrap-count="15" position="0 0.12 0.05"></a-text>
+          <a-text value="Volver al\ninicio" align="center" baseline="center" width="2.5" font="mozillavr" wrap-count="15" position="0 0.12 0.05"></a-text>
         </a-circle>
         
         <a-circle id="btnRetro" class="clickable" radius="0.95" color="#696a6d" position="-3.5 0 0">
-          <a-text value="-10s" align="center" baseline="center" width="2" font="mozillavr" wrap-count="10" position="0 0.12 0.05"></a-text>
+          <a-text value="-10s" align="center" baseline="center" width="2.5" font="mozillavr" wrap-count="10" position="0 0.12 0.05"></a-text>
         </a-circle>
         
         <a-circle id="btnPausa" class="clickable" radius="0.95" color="#E3173E" position="0 0 0">
-          <a-text id="txtPausa" value="PAUSA" align="center" baseline="center" width="2" font="mozillavr" wrap-count="10" position="0 0.12 0.05"></a-text>
+          <a-text id="txtPausa" value="PAUSA" align="center" baseline="center" width="2.5" font="mozillavr" wrap-count="10" position="0 0.12 0.05"></a-text>
         </a-circle>
         
         <a-circle id="btnAvanzar" class="clickable" radius="0.95" color="#696a6d" position="3.5 0 0">
-          <a-text value="+10s" align="center" baseline="center" width="2" font="mozillavr" wrap-count="10" position="0 0.12 0.05"></a-text>
+          <a-text value="+10s" align="center" baseline="center" width="2.5" font="mozillavr" wrap-count="10" position="0 0.12 0.05"></a-text>
         </a-circle>
         
         <a-circle id="btnReset" class="clickable" radius="0.95" color="#FFFFFF" position="6.5 0 0">
-          <a-text value="Reiniciar" color="#000" align="center" baseline="center" width="2" font="mozillavr" wrap-count="10" position="0 0.12 0.05"></a-text>
+          <a-text value="Reiniciar" color="#000" align="center" baseline="center" width="2.5" font="mozillavr" wrap-count="10" position="0 0.12 0.05"></a-text>
         </a-circle>
       </a-entity>
     </a-entity>
@@ -101,21 +101,41 @@ const barraProgreso = document.querySelector('#barraProgreso');
 const textoDuracion = document.querySelector('#textoDuracion');
 const txtPausa = document.querySelector('#txtPausa');
 
+const btnAvanzar = document.querySelector('#btnAvanzar');
+const btnRetro = document.querySelector('#btnRetro');
+const txtAvanzar = btnAvanzar.querySelector('a-text');
+const txtRetro = btnRetro.querySelector('a-text');
+
 const ANCHO_BARRA = 20;
 const animacionEntrada = "property: position; to: 0 1.6 -2.5; dur: 8000; easing: easeOutCubic; delay: 500";
 
+// ---- SALTOS DINÁMICOS ----
+let saltoAvance = 10;
+let saltoRetroceso = 10;
+
+// ---- BARRA COMPATIBLE CON QUEST ----
 function actualizarBarra() {
-  if (video.paused || video.ended) return;
-  const progreso = video.currentTime / (video.duration || 28);
+  const duracion = video.duration || 28;
+  const progreso = video.currentTime / duracion;
+
   barraProgreso.setAttribute('width', progreso * ANCHO_BARRA);
-  barraProgreso.setAttribute('position', `${-ANCHO_BARRA/2 + (progreso * ANCHO_BARRA)/2} 0 0.01`);
-  
+  barraProgreso.setAttribute(
+    'position',
+    `${-ANCHO_BARRA / 2 + (progreso * ANCHO_BARRA) / 2} 0 0.01`
+  );
+
   const m = Math.floor(video.currentTime / 60);
   const s = Math.floor(video.currentTime % 60).toString().padStart(2, '0');
-  textoDuracion.setAttribute('value', `${m}:${s} / 0:28`);
-  requestAnimationFrame(actualizarBarra);
+  const md = Math.floor(duracion / 60);
+  const sd = Math.floor(duracion % 60).toString().padStart(2, '0');
+
+  textoDuracion.setAttribute('value', `${m}:${s} / ${md}:${sd}`);
 }
 
+// 👈 ESTE EVENTO ES LA CLAVE PARA QUEST
+video.addEventListener('timeupdate', actualizarBarra);
+
+// ---- BOTÓN PRINCIPAL ----
 btnAccion.addEventListener('click', () => {
   contenedorBtn.setAttribute('visible', 'false');
   skyPrincipal.setAttribute('visible', 'false');
@@ -129,20 +149,60 @@ btnAccion.addEventListener('click', () => {
   setTimeout(() => {
     pantalla.emit('videoEntra');
     video.play();
-    actualizarBarra();
   }, 500);
 });
 
+// ---- PAUSA / PLAY ----
 document.querySelector('#btnPausa').addEventListener('click', () => {
-  if (video.paused) { video.play(); txtPausa.setAttribute('value', 'PAUSA'); actualizarBarra(); }
-  else { video.pause(); txtPausa.setAttribute('value', 'PLAY'); }
+  if (video.paused) {
+    video.play();
+    txtPausa.setAttribute('value', 'PAUSA');
+  } else {
+    video.pause();
+    txtPausa.setAttribute('value', 'PLAY');
+  }
 });
 
-document.querySelector('#btnRetro').addEventListener('click', () => { video.currentTime -= 10; });
-document.querySelector('#btnAvanzar').addEventListener('click', () => { video.currentTime += 10; });
-document.querySelector('#btnReset').addEventListener('click', () => { video.currentTime = 0; video.play(); });
-document.querySelector('#btnSalir').addEventListener('click', () => { video.pause(); video.dispatchEvent(new Event('ended')); });
+// ---- AVANZAR DINÁMICO ----
+btnAvanzar.addEventListener('click', () => {
+  saltoAvance += 10;
+  saltoRetroceso = 10;
 
+  video.currentTime = Math.min(video.currentTime + 10, video.duration);
+
+  txtAvanzar.setAttribute('value', `+${saltoAvance}s`);
+  txtRetro.setAttribute('value', `-${saltoRetroceso}s`);
+});
+
+// ---- RETROCEDER DINÁMICO ----
+btnRetro.addEventListener('click', () => {
+  saltoRetroceso += 10;
+  saltoAvance = 10;
+
+  video.currentTime = Math.max(video.currentTime - 10, 0);
+
+  txtRetro.setAttribute('value', `-${saltoRetroceso}s`);
+  txtAvanzar.setAttribute('value', `+${saltoAvance}s`);
+});
+
+// ---- RESET ----
+document.querySelector('#btnReset').addEventListener('click', () => {
+  video.currentTime = 0;
+  video.play();
+
+  saltoAvance = 10;
+  saltoRetroceso = 10;
+  txtAvanzar.setAttribute('value', '+10s');
+  txtRetro.setAttribute('value', '-10s');
+});
+
+// ---- SALIR ----
+document.querySelector('#btnSalir').addEventListener('click', () => {
+  video.pause();
+  video.dispatchEvent(new Event('ended'));
+});
+
+// ---- FIN DEL VIDEO ----
 video.addEventListener('ended', () => {
   grupoCine.setAttribute('visible', 'false');
   skyButacas.setAttribute('visible', 'false');
@@ -154,9 +214,18 @@ video.addEventListener('ended', () => {
   contenedorBtn.setAttribute('visible', 'true');
   contenedorBtn.setAttribute('position', '0 1.6 -15');
   contenedorBtn.removeAttribute('animation');
-  setTimeout(() => { contenedorBtn.setAttribute('animation', animacionEntrada); }, 50);
+  setTimeout(() => {
+    contenedorBtn.setAttribute('animation', animacionEntrada);
+  }, 50);
+
+  // Reset visual de botones
+  saltoAvance = 10;
+  saltoRetroceso = 10;
+  txtAvanzar.setAttribute('value', '+10s');
+  txtRetro.setAttribute('value', '-10s');
 });
 </script>
+
 
 </body>
 </html>
